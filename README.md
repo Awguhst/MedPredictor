@@ -76,6 +76,11 @@ To run this application, you need to install the following Python libraries with
 - **shap** >= 0.42.0
 - **matplotlib** >= 3.7.0
 - **plotly** >= 5.15.0
-- **sqlite3**
+- **sqlite3** 
+
+You can install all the dependencies at once using the following command:
+
+```bash
+pip install -r requirements.txt
 
 ---
