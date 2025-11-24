@@ -30,7 +30,7 @@ The final page allows users to query the dataset that was used to train the mach
 ## Access the Application
 
 To try out the Medical Predictor app, visit the following link:  
-[Medical Predictor Streamlit App]([http://your-app-link-here](https://medpredictor-mhv7x4ryaycn2rabdtkktw.streamlit.app/))
+[Medical Predictor Streamlit App](https://medpredictor-mhv7x4ryaycn2rabdtkktw.streamlit.app/)
 
 ---
 
