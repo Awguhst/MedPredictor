@@ -40,10 +40,10 @@ This section will provide detailed information on the machine learning models us
 
 ### Cardiovascular Disease Prediction Model
 
-- **Dataset Used:** [Insert dataset link]
-- **Model Type:** Logistic Regression / Random Forest (or other models used)
-- **Metrics:** Accuracy, Precision, Recall, F1-Score
-- **Hyperparameter Optimization:** Optuna (or other optimization techniques)
+- **Dataset Used:** [Cardiovascular Disease - Kaggle](https://www.kaggle.com/datasets/sulianova/cardiovascular-disease-dataset/data)
+- **Model Type:** XGBoost
+- **Metrics:** Accuracy: 74%, F1-Score: 0.74
+- **Hyperparameter Optimization:** Optuna
 - **Description:** This model predicts the likelihood of cardiovascular disease based on personal statistics like cholesterol, blood pressure, and other relevant health data. It uses a binary classification approach to classify patients into risk groups.
 
 ### Pneumonia Detection from X-Ray Model
@@ -51,7 +51,6 @@ This section will provide detailed information on the machine learning models us
 - **Dataset Used:** [Insert dataset link] (e.g., Chest X-ray Dataset)
 - **Model Type:** Convolutional Neural Network (CNN)
 - **Metrics:** Accuracy, Precision, Recall, F1-Score, AUC
-- **Hyperparameter Optimization:** Optuna (or other optimization techniques)
 - **Description:** This model is a deep learning-based CNN that classifies X-ray images to detect pneumonia. It was trained on a large dataset of X-ray images with labels indicating whether the person has pneumonia or not.
 
 ### Data Querying and Exploration
