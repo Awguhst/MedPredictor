@@ -40,14 +40,14 @@ This section will provide detailed information on the machine learning models us
 
 ### Symptom-Based Disease Prediction Model
 
-- **Dataset Used:** [Disease Prediction](https://www.kaggle.com/datasets/noeyislearning/disease-prediction-based-on-symptoms/data)  
+- **Dataset Used:** [Disease Prediction Dataset](https://www.kaggle.com/datasets/noeyislearning/disease-prediction-based-on-symptoms/data)  
 - **Model Type:** Logistic Regression  
 - **Metrics:** Accuracy: 1.0, F1-Score: 1.0
 - **Description:** This model predicts diseases based on symptoms entered by the user. It was trained on a dataset containing symptom-disease relationships and uses a multi-class classification approach. SHAP values are used to explain the model’s decisions.
 
 ### Cardiovascular Disease Prediction Model
 
-- **Dataset Used:** [Cardiovascular Disease](https://www.kaggle.com/datasets/sulianova/cardiovascular-disease-dataset/data)
+- **Dataset Used:** [Cardiovascular Disease Dataset](https://www.kaggle.com/datasets/sulianova/cardiovascular-disease-dataset/data)
 - **Model Type:** XGBoost
 - **Metrics:** Accuracy: 0.74, F1-Score: 0.74
 - **Hyperparameter Optimization:** Optuna
@@ -55,9 +55,9 @@ This section will provide detailed information on the machine learning models us
 
 ### Pneumonia Detection from X-Ray Model
 
-- **Dataset Used:** [Insert dataset link] (e.g., Chest X-ray Dataset)
+- **Dataset Used:** [Pneumonia Detection Dataset](https://data.mendeley.com/datasets/rscbjbr9sj/2)
 - **Model Type:** Convolutional Neural Network (CNN)
-- **Metrics:** Accuracy, Precision, Recall, F1-Score, AUC
+- **Metrics:** F1-Score : 0.94
 - **Description:** This model is a deep learning-based CNN that classifies X-ray images to detect pneumonia. It was trained on a large dataset of X-ray images with labels indicating whether the person has pneumonia or not.
 
 ---
