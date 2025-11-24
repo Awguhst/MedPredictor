@@ -27,20 +27,27 @@ The final page allows users to query the dataset that was used to train the mach
 
 ---
 
+## Access the Application
+
+To try out the Medical Predictor app, visit the following link:  
+[Medical Predictor Streamlit App]([http://your-app-link-here](https://medpredictor-mhv7x4ryaycn2rabdtkktw.streamlit.app/))
+
+---
+
 ## Models and Datasets
 
 This section will provide detailed information on the machine learning models used in the application, including the datasets, metrics, and other relevant details.
 
 ### Symptom-Based Disease Prediction Model
 
-- **Dataset Used:** [Disease Prediction - Kaggle](https://www.kaggle.com/datasets/noeyislearning/disease-prediction-based-on-symptoms/data)  
+- **Dataset Used:** [Disease Prediction](https://www.kaggle.com/datasets/noeyislearning/disease-prediction-based-on-symptoms/data)  
 - **Model Type:** Logistic Regression  
 - **Metrics:** Accuracy: 1.0, F1-Score: 1.0
 - **Description:** This model predicts diseases based on symptoms entered by the user. It was trained on a dataset containing symptom-disease relationships and uses a multi-class classification approach. SHAP values are used to explain the model’s decisions.
 
 ### Cardiovascular Disease Prediction Model
 
-- **Dataset Used:** [Cardiovascular Disease - Kaggle](https://www.kaggle.com/datasets/sulianova/cardiovascular-disease-dataset/data)
+- **Dataset Used:** [Cardiovascular Disease](https://www.kaggle.com/datasets/sulianova/cardiovascular-disease-dataset/data)
 - **Model Type:** XGBoost
 - **Metrics:** Accuracy: 74%, F1-Score: 0.74
 - **Hyperparameter Optimization:** Optuna
@@ -52,11 +59,5 @@ This section will provide detailed information on the machine learning models us
 - **Model Type:** Convolutional Neural Network (CNN)
 - **Metrics:** Accuracy, Precision, Recall, F1-Score, AUC
 - **Description:** This model is a deep learning-based CNN that classifies X-ray images to detect pneumonia. It was trained on a large dataset of X-ray images with labels indicating whether the person has pneumonia or not.
-
-### Data Querying and Exploration
-
-- **Dataset Used:** [Insert dataset link]
-- **Model Type:** N/A (Data Exploration Tool)
-- **Description:** This page does not involve a machine learning model but allows users to interact with the underlying data. Users can filter and query the data based on various features, helping them understand the dataset better and explore relationships between features.
 
 ---
