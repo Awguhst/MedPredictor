@@ -49,7 +49,7 @@ This section will provide detailed information on the machine learning models us
 
 - **Dataset Used:** [Cardiovascular Disease](https://www.kaggle.com/datasets/sulianova/cardiovascular-disease-dataset/data)
 - **Model Type:** XGBoost
-- **Metrics:** Accuracy: 74%, F1-Score: 0.74
+- **Metrics:** Accuracy: 0.74, F1-Score: 0.74
 - **Hyperparameter Optimization:** Optuna
 - **Description:** This model predicts the likelihood of cardiovascular disease based on personal statistics like cholesterol, blood pressure, and other relevant health data. It uses a binary classification approach to classify patients into risk groups.
 
