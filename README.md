@@ -61,3 +61,21 @@ This section will provide detailed information on the machine learning models us
 - **Description:** This model is a deep learning-based CNN that classifies X-ray images to detect pneumonia. It was trained on a large dataset of X-ray images with labels indicating whether the person has pneumonia or not.
 
 ---
+
+## Requirements
+
+To run this application, you need to install the following Python libraries with the specified versions:
+
+- **streamlit** >= 1.30.0
+- **pandas** >= 1.5.0
+- **numpy** >= 1.21.0
+- **xgboost** == 2.0.3
+- **torch** >= 2.0.0
+- **torchvision** >= 0.15.0
+- **Pillow** >= 9.0.0
+- **shap** >= 0.42.0
+- **matplotlib** >= 3.7.0
+- **plotly** >= 5.15.0
+- **sqlite3**
+
+---
