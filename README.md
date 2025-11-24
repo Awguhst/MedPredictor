@@ -33,10 +33,9 @@ This section will provide detailed information on the machine learning models us
 
 ### 1. Symptom-Based Disease Prediction Model
 
-- **Dataset Used:** [Insert dataset link]
-- **Model Type:** Random Forest Classifier (or other models used)
-- **Metrics:** Accuracy, F1-Score, AUC (Area Under Curve)
-- **Hyperparameter Optimization:** Optuna (or other optimization techniques)
+- **Dataset Used:** [Disease Prediction Based on Symptoms - Kaggle](https://www.kaggle.com/datasets/noeyislearning/disease-prediction-based-on-symptoms/data)  
+- **Model Type:** Logistic Regression  
+- **Metrics:** Accuracy: 1.0, F1-Score: 1.0, AUC: 1.0  
 - **Description:** This model predicts diseases based on symptoms entered by the user. It was trained on a dataset containing symptom-disease relationships and uses a multi-class classification approach. SHAP values are used to explain the model’s decisions.
 
 ### 2. Cardiovascular Disease Prediction Model
