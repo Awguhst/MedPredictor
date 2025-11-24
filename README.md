@@ -1,4 +1,4 @@
-**# MedPredictor**# Machine Learning Streamlit Application
+# MedPredictor # Machine Learning Streamlit Application
 
 This is a Streamlit-based machine learning application that offers multiple functionalities for health-related predictions. The app includes different pages, each targeting a specific aspect of health diagnostics and data querying:
 
