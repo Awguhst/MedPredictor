@@ -47,11 +47,17 @@ pneumonia_page = st.Page(
     icon=":material/air:",
 )
 
+tuberculosis_page = st.Page(
+    "pages/tuberculosis.py",
+    title="Tuberculosis",
+    icon=":material/coronavirus:",
+)
+
 pg = st.navigation(
     {
         "Info": [about_page],
         "Tabular models": [disease_page, cardiovascular_page],
-        "Vision models": [pneumonia_page],
+        "Vision models": [pneumonia_page,tuberculosis_page],
         "Data": [sqlite_page]
     }
 )

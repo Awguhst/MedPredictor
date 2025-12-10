@@ -74,7 +74,7 @@ st.markdown("""
 
 st.set_page_config(page_title="X_Ray", layout="centered")
 
-# Define the same model architecture as before
+# Define the CNN model architecture for TB classification
 class CNN(nn.Module):
     def __init__(self, num_classes, dropout_rate):
         super(CNN, self).__init__()
@@ -116,15 +116,15 @@ class CNN(nn.Module):
         x = self.classifier(x)
         return x
 
-# Load the model
+# Load the model for TB detection
 def load_model(device):
     model = CNN(num_classes=2, dropout_rate=0.15)
-    model.load_state_dict(torch.load('./models/pneumonia_weights.pth', map_location=device))  # Load saved weights
+    model.load_state_dict(torch.load('./models/tuberculosis_weights.pth', map_location=device))  # Load TB detection weights
     model.to(device)  # Move the model to the correct device (GPU/CPU)
     model.eval()  # Set the model to evaluation mode
     return model
 
-# Define the image transformation
+# Define the image transformation for input images
 def transform_image(image):
     # Convert the image to RGB if it's in grayscale
     if image.mode != 'RGB':
@@ -137,20 +137,20 @@ def transform_image(image):
     image = img_transforms(image).unsqueeze(0)  # Add batch dimension
     return image
 
-# Title and description
-st.title("Pneumonia Detection")
+# Title and description for the app
+st.title("Tuberculosis Detection")
 st.markdown(
     """
     <p style="text-align:center; font-size:1.1rem;">
-    Upload an image to predict whether the person has Pneumonia or not.
+    Upload an X-ray image to predict whether the person has Tuberculosis (TB) or not.
     </p>
     """,
     unsafe_allow_html=True,
 )
 
-# Path to your local example images
+# Path to example image for testing
 EXAMPLES_FOLDER = "examples"  
-EXAMPLE_IMAGE_PATH = os.path.join(EXAMPLES_FOLDER, "person100_bacteria_481.jpeg")  # your sample file
+EXAMPLE_IMAGE_PATH = os.path.join(EXAMPLES_FOLDER, "Tuberculosis-103.png")  # Replace with a real TB example file
 
 # Ensure the folder and file exist
 if not os.path.exists(EXAMPLE_IMAGE_PATH):
@@ -186,12 +186,12 @@ if uploaded_file is not None:
         probabilities = torch.softmax(output, dim=1)[0]
         predicted_class = torch.argmax(probabilities).item()
 
-    class_names = ['Normal', 'Pneumonia']
+    class_names = ['Normal', 'Tuberculosis']
     normal_prob = probabilities[0].item()
-    pneumonia_prob = probabilities[1].item()
+    tb_prob = probabilities[1].item()
 
-    majority_class = "Normal" if normal_prob > pneumonia_prob else "Pneumonia"
-    majority_prob = max(normal_prob, pneumonia_prob)
+    majority_class = "Normal" if normal_prob > tb_prob else "Tuberculosis"
+    majority_prob = max(normal_prob, tb_prob)
     border_color = "#00796b" if majority_class == "Normal" else "#d32f2f"
     text_color = border_color
 

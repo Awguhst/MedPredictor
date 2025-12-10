@@ -10,7 +10,7 @@ st.set_page_config(
 
 st.markdown("""
 <style>
-    .block-container {max-width: 850px; margin: auto;}
+    .block-container {max-width: 1100px; margin: auto;}
     
     /* Main app background & font */
     .stApp {
@@ -57,7 +57,7 @@ st.markdown("""
 
     .disclaimer {
         background: rgba(251, 146, 60, 0.12);   /* subtle orange glow */
-        border-left: 6px solid #fb923c;
+        border-left: 2px solid #fb923c;
         padding: 1.5rem;
         border-radius: 12px;
         margin: 2rem 0;
@@ -88,6 +88,7 @@ The <strong>Medical Predictor</strong> uses machine learning to analyze symptoms
 </div>
 """, unsafe_allow_html=True)
 
+st.markdown("")
 st.markdown("")
 
 col1, col2 = st.columns(2)
@@ -121,6 +122,7 @@ with col2:
         <div class="feature-desc">Select and query the different databases used for training the models, then view and export the results..</div>
     </div>
     """, unsafe_allow_html=True)
+    
 
 st.markdown("""
 <div class="disclaimer">
