@@ -19,7 +19,7 @@ Users can input their personal statistics to get a prediction on whether they ar
 
 ## Pneumonia and Tuberculosis Detection from X-Ray Images
 
-This page allows users to upload an X-ray image, and the application will predict whether the person has pneumonia or tuberculosis based on the image. The model uses deep learning techniques for image classification, trained on medical X-ray datasets specifically for pneumonia and tuberculosis detection.
+This pages allows users to upload an X-ray images, and the application will predict whether the person has pneumonia or tuberculosis based on the image. The model uses deep learning techniques for image classification, trained on medical X-ray datasets specifically for pneumonia and tuberculosis detection.
 
 ## Data Exploration and Filtering
 
