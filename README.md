@@ -54,11 +54,17 @@ This section will provide detailed information on the machine learning models us
 - **Hyperparameter Optimization:** Optuna
 - **Description:** This model predicts the likelihood of cardiovascular disease based on personal statistics like cholesterol, blood pressure, and other relevant health data. It uses a binary classification approach to classify patients into risk groups.
 
-### Pneumonia Detection from X-Ray Model
+### Pneumonia Detection
 
 - **Dataset Used:** [Pneumonia Detection Dataset](https://data.mendeley.com/datasets/rscbjbr9sj/2)
 - **Model Type:** Convolutional Neural Network (CNN)
 - **Metrics:** F1-Score : 0.94
 - **Description:** This model is a deep learning-based CNN that classifies X-ray images to detect pneumonia. It was trained on a large dataset of X-ray images with labels indicating whether the person has pneumonia or not.
 
+### Tuberculosis Detection 
+
+- **Dataset Used:** [Tuberculosis Detection Dataset]([https://data.mendeley.com/datasets/rscbjbr9sj/2](https://www.kaggle.com/datasets/tawsifurrahman/tuberculosis-tb-chest-xray-dataset))
+- **Model Type:** Convolutional Neural Network (CNN)
+- **Metrics:** F1-Score : 0.98
+- **Description:** Similarly this model classifies X-ray images to detect tuberculosis.
 ---
