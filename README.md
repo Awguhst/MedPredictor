@@ -17,9 +17,9 @@ The second page predicts the likelihood of cardiovascular disease based on perso
 
 Users can input their personal statistics to get a prediction on whether they are at risk for cardiovascular issues. SHAP values are also used here to help explain the contributions of each factor to the overall prediction, offering more transparency into how the model makes its assessment.
 
-## Pneumonia Detection from X-Ray Images
+## Pneumonia and Tuberculosis Detection from X-Ray Images
 
-This page allows users to upload an X-ray image, and the application will predict whether the person has pneumonia based on the image. The model uses deep learning techniques for image classification, trained on medical X-ray datasets.
+This page allows users to upload an X-ray image, and the application will predict whether the person has pneumonia or tuberculosis based on the image. The model uses deep learning techniques for image classification, trained on medical X-ray datasets specifically for pneumonia and tuberculosis detection.
 
 ## Data Exploration and Filtering
 
