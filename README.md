@@ -66,5 +66,5 @@ This section will provide detailed information on the machine learning models us
 - **Dataset Used:** [Tuberculosis Detection Dataset]([https://data.mendeley.com/datasets/rscbjbr9sj/2](https://www.kaggle.com/datasets/tawsifurrahman/tuberculosis-tb-chest-xray-dataset))
 - **Model Type:** Convolutional Neural Network (CNN)
 - **Metrics:** F1-Score : 0.98
-- **Description:** Similarly this model classifies X-ray images to detect tuberculosis.
+- **Description:** Similarly this model classifies X-ray images in order to detect tuberculosis.
 ---
