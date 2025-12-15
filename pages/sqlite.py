@@ -188,7 +188,7 @@ else:
         
         with col2:
             if st.button("Copy Results to Clipboard", use_container_width=True):
-                result.to_clipboard(index=False)
+                pass
                 
         st.caption(f"Query executed in **{exec_time:.1f} ms**")
     else:
