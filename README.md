@@ -17,9 +17,9 @@ The second page predicts the likelihood of cardiovascular disease based on perso
 
 Users can input their personal statistics to get a prediction on whether they are at risk for cardiovascular issues. SHAP values are also used here to help explain the contributions of each factor to the overall prediction, offering more transparency into how the model makes its assessment.
 
-## Pneumonia Detection from X-Ray Images
+## Pneumonia and Tuberculosis Detection from X-Ray Images
 
-This page allows users to upload an X-ray image, and the application will predict whether the person has pneumonia based on the image. The model uses deep learning techniques for image classification, trained on medical X-ray datasets.
+This pages allows users to upload an X-ray images, and the application will predict whether the person has pneumonia or tuberculosis based on the image. The model uses deep learning techniques for image classification, trained on medical X-ray datasets specifically for pneumonia and tuberculosis detection.
 
 ## Data Exploration and Filtering
 
@@ -54,11 +54,17 @@ This section will provide detailed information on the machine learning models us
 - **Hyperparameter Optimization:** Optuna
 - **Description:** This model predicts the likelihood of cardiovascular disease based on personal statistics like cholesterol, blood pressure, and other relevant health data. It uses a binary classification approach to classify patients into risk groups.
 
-### Pneumonia Detection from X-Ray Model
+### Pneumonia Detection
 
 - **Dataset Used:** [Pneumonia Detection Dataset](https://data.mendeley.com/datasets/rscbjbr9sj/2)
 - **Model Type:** Convolutional Neural Network (CNN)
 - **Metrics:** F1-Score : 0.94
 - **Description:** This model is a deep learning-based CNN that classifies X-ray images to detect pneumonia. It was trained on a large dataset of X-ray images with labels indicating whether the person has pneumonia or not.
 
+### Tuberculosis Detection 
+
+- **Dataset Used:** [Tuberculosis Detection Dataset](https://www.kaggle.com/datasets/tawsifurrahman/tuberculosis-tb-chest-xray-dataset)
+- **Model Type:** Convolutional Neural Network (CNN)
+- **Metrics:** F1-Score : 0.98
+- **Description:** Similarly this model classifies X-ray images in order to detect tuberculosis.
 ---
