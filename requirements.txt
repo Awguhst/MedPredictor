@@ -8,5 +8,7 @@ Pillow>=9.0.0
 shap>=0.42.0
 matplotlib>=3.7.0
 plotly>=5.15.0
+pytorch_grad_cam
 sqlite3; sys_platform == "win32"  
+
 
