@@ -10,7 +10,8 @@ matplotlib>=3.7.0
 plotly>=5.15.0
 grad-cam
 opencv-python-headless
-sqlite3; sys_platform == "win32"  
+ttach
+
 
 
 
