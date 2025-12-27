@@ -199,12 +199,12 @@ if predict_btn:
     # Display result card
     if risk == 1:
         card_class = "high-risk"
-        title = f"<span style='color: #d32f2f; font-size: 22px;'>High Susceptibility to Cardiovascular Disease</span>"  # Adjust font size
-        prob_text = f"<span style='color: #d32f2f; font-size: 20px;'>Probability: {prob[1]:.1%}</span>"  # Adjust font size
+        title = f"<span style='color: #d32f2f; font-size: 22px;'>High Susceptibility to Cardiovascular Disease</span>"  
+        prob_text = f"<span style='color: #d32f2f; font-size: 20px;'>Probability: {prob[1]:.1%}</span>"  
     else:
         card_class = "low-risk"
-        title = f"<span style='color: #00796b; font-size: 22px;'>Low Susceptibility to Cardiovascular Disease</span>"  # Adjust font size
-        prob_text = f"<span style='color: #00796b; font-size: 20px;'>Probability: {prob[0]:.1%}</span>"  # Adjust font size
+        title = f"<span style='color: #00796b; font-size: 22px;'>Low Susceptibility to Cardiovascular Disease</span>"  
+        prob_text = f"<span style='color: #00796b; font-size: 20px;'>Probability: {prob[0]:.1%}</span>" 
 
     st.markdown(
         f"""
