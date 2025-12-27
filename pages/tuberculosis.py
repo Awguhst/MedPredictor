@@ -230,7 +230,7 @@ if uploaded_file is not None:
     
     # Grad-CAM in Expander
     with st.expander("View Model Explanation (Grad-CAM Heatmap)", expanded=False):
-        st.markdown("> **Heatmap shows regions the model focused on for its prediction.**")
+        st.markdown("> **Grad-CAM creates a heatmap to show which parts of an image were most important in the model's prediction, highlighting the areas that had the greatest influence on the final decision.**")
 
         # Target the last convolutional layer
         target_layer = model.features[13]

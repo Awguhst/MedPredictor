@@ -6,6 +6,7 @@ import shap
 import matplotlib.pyplot as plt
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
+import google.generativeai as genai
 
 if "shap_ready" not in st.session_state:
     st.session_state.shap_ready = False
@@ -60,10 +61,10 @@ st.markdown("""
     /* Cards */
     .card {
         padding: 1.5rem;
-        border-radius: 16px;
+        border-radius: 10px;
         box-shadow: 0 4px 12px rgba(0,0,0,0.05);
         margin-bottom: 1.5rem;
-        border: 1px solid #e5e7eb;
+        border: 2px solid #23252b;
     }
 
     /* Buttons */
@@ -231,7 +232,7 @@ if make_prediction_button:
 if st.session_state.shap_ready:
     st.markdown("##### Most Likely Diseases")
 
-    # Define a function to categorize certainty based on the probability
+    # Define a function to categorize certainty
     def categorize_certainty(prob):
         if prob >= 0.75:
             return "High Certainty"
@@ -240,52 +241,105 @@ if st.session_state.shap_ready:
         else:
             return "Low Certainty"
 
-    # Prepare the DataFrame with disease names and their certainty levels
+    # Prepare DataFrame
     disease_certainty_df = pd.DataFrame({
         'Disease': st.session_state.top_5_diseases,
         'Certainty': [categorize_certainty(p) for p in st.session_state.top_5_probs]
     })
 
-    # Create columns for the cards
+    # Generate short explanations for all 5 diseases
+    if "disease_explanations" not in st.session_state:
+        try:
+            # Load API key from secrets
+            genai.configure(api_key=st.secrets["gemini_api_key"])
+
+            gemini_api = genai.GenerativeModel("gemini-2.5-flash")  
+
+            diseases_list = "\n".join([f"- {d}" for d in st.session_state.top_5_diseases])
+
+            prompt = f"""
+            Give a very short (1 sentence, max 18 words) patient-friendly explanation for each condition below.
+            Format exactly: Disease Name: explanation text
+            No extra text, numbers, or quotes.
+
+            Conditions:
+            {diseases_list}
+            """
+
+            response = gemini_api.generate_content(prompt)
+            raw_text = response.text.strip()
+
+            explanations_dict = {}
+            for line in raw_text.split('\n'):
+                if ':' in line:
+                    name_part, expl = line.split(':', 1)
+                    disease_name = name_part.strip()
+                    explanations_dict[disease_name] = expl.strip()
+
+            st.session_state.disease_explanations = explanations_dict
+        except Exception as e:
+            # Fallback if API fails 
+            st.session_state.disease_explanations = {
+                d: "A medical condition that requires professional evaluation."
+                for d in st.session_state.top_5_diseases
+            }
+
+    # Create 5 columns for cards
     cols = st.columns(5)
 
-    # Loop through the diseases and certainty levels and display each as a card in a column
+    # Display each card with disease + short explanation + certainty
     for i, (disease, certainty) in enumerate(zip(disease_certainty_df['Disease'], disease_certainty_df['Certainty'])):
         with cols[i]:
-            # Custom CSS
+            # Get explanation (with fallback)
+            explanation = st.session_state.disease_explanations.get(
+                disease,
+                "Brief description unavailable."
+            )
+
             st.markdown(
                 f"""
-                <div style="
+                <div class="card" style="
                     background: linear-gradient(to right, #1a1d23, #262730);
                     padding: 20px;
-                    height: 240px;
+                    height: 240px;  <!-- Increased to fit explanation -->
                     display: flex;
                     flex-direction: column;
                     justify-content: space-between;
-                    border-radius: 12px;
+                    border-radius: 12px !important;
                     box-shadow: 0 4px 12px rgba(0,0,0,0.2);
                     border: 2px solid #23252b;
                     transition: all 0.3s ease;
                     ">
-                    <h3 style="
-                        text-align: center;
-                        font-size: 18px;
-                        font-weight: bold;
-                        color: #ffffff;
-                        margin: 0;
-                        ">{disease}</h3>
+                    <div>
+                        <h3 style="
+                            text-align: center;
+                            font-size: 18px;
+                            font-weight: bold;
+                            color: #ffffff;
+                            margin: 0 0 12px 0;
+                            ">{disease}</h3>
+                        <p style="
+                            text-align: center;
+                            font-size: 14.5px;
+                            color: #b0bec5;
+                            line-height: 1.4;
+                            margin: 0 0 20px 0;
+                            ">{explanation}</p>
+                    </div>
                     <p style="
                         text-align: center;
                         font-size: 16px;
                         color: #ffffff;
-                        margin: 10px 0 0 0;
+                        font-weight: 600;
+                        margin: 0;
                         ">{certainty}</p>
                 </div>
-                """, unsafe_allow_html=True)
+                """,
+                unsafe_allow_html=True
+            )
 
     st.markdown("")
-
-
+    
     # Confidence Dashboard
     if st.session_state.shap_ready:
         top_prob    = st.session_state.top_5_probs[0]
@@ -457,6 +511,3 @@ if st.session_state.shap_ready:
             plt.subplots_adjust(**PAD_BAR)
             st.pyplot(fig, bbox_inches='tight', pad_inches=0.05)
             plt.close(fig)
-
-                  
-            
