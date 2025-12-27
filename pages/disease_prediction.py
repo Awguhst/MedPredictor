@@ -186,152 +186,166 @@ with col_btn2:
         key="predict_btn"
     )
 
-    # When the button is clicked
-    if make_prediction_button:
-        if len(selected_features) >= 3:
-            with st.spinner("Analyzing symptoms, generating predictions and explanations..."):
-                # Build the input vector
-                input_vector = np.zeros(len(columns))
-                for feature in selected_features:
-                    input_vector[columns.index(feature)] = 1
-                input_df = pd.DataFrame([input_vector], columns=columns)
+# When the button is clicked
+if make_prediction_button:
+    if len(selected_features) >= 3:
+        # Build the input vector
+        input_vector = np.zeros(len(columns))
+        for feature in selected_features:
+            input_vector[columns.index(feature)] = 1
+        input_df = pd.DataFrame([input_vector], columns=columns)
 
-                # Predict probabilities
-                prediction_probs = model.predict_proba(input_df)[0]
+        # Predict probabilities
+        prediction_probs = model.predict_proba(input_df)[0]
 
-                # Top-5
-                top_5_indices = np.argsort(prediction_probs)[::-1][:5]
-                top_5_diseases = [model.classes_[i] for i in top_5_indices]
-                top_5_probs = prediction_probs[top_5_indices]
+        # Top‑5 
+        top_5_indices = np.argsort(prediction_probs)[::-1][:5]
+        top_5_diseases = [model.classes_[i] for i in top_5_indices]
+        top_5_probs = prediction_probs[top_5_indices]
 
-                # SHAP Explanation
-                background = np.zeros((100, len(columns)))  # 100 background samples for stability
-                background_df = pd.DataFrame(background, columns=columns)
-                explainer = shap.LinearExplainer(model, background_df)
-                shap_values = explainer(input_df)
-                expected_value = explainer.expected_value
+        # SHAP
+        background = np.zeros((1, len(columns)))
+        background_df = pd.DataFrame(background, columns=columns)
 
-                # Generate short disease explanations using Gemini
-                try:
-                    genai.configure(api_key=st.secrets["gemini_api_key"])
-                    gemini_model = genai.GenerativeModel("gemini-2.5-flash")  
-                    diseases_list = "\n".join([f"- {d}" for d in top_5_diseases])
-                    prompt = f"""
-                    Give a very short (1 sentence, max 18 words) patient-friendly explanation for each condition below.
-                    Format exactly: Disease Name: explanation text
-                    No extra text, numbers, or quotes.
-                    Conditions:
-                    {diseases_list}
-                    """
-                    response = gemini_model.generate_content(prompt)
-                    raw_text = response.text.strip()
+        explainer = shap.LinearExplainer(model, background_df)
+        shap_values = explainer(input_df)               
+        expected_value = explainer.expected_value     
 
-                    explanations_dict = {}
-                    for line in raw_text.split('\n'):
-                        if ':' in line:
-                            name_part, expl = line.split(':', 1)
-                            disease_name = name_part.strip()
-                            explanations_dict[disease_name] = expl.strip()
-                except Exception as e:
-                    # Fallback if API fails
-                    explanations_dict = {
-                        d: "A medical condition that requires professional evaluation."
-                        for d in top_5_diseases
-                    }
-                    
-                st.session_state.update({
-                    "shap_ready": True,
-                    "prediction_probs": prediction_probs,
-                    "top_5_diseases": top_5_diseases,
-                    "top_5_indices": top_5_indices,
-                    "top_5_probs": top_5_probs,
-                    "shap_values": shap_values,
-                    "expected_value": expected_value,
-                    "input_df": input_df,
-                    "input_vector": input_vector,
-                    "disease_explanations": explanations_dict,
-                })
-        else:
+        # Cache everything
+        st.session_state.update(
+            shap_ready=True,
+            prediction_probs=prediction_probs,
+            top_5_diseases=top_5_diseases,
+            top_5_indices=top_5_indices,
+            top_5_probs=top_5_probs,
+            shap_values=shap_values,
+            expected_value=expected_value,
+            input_df=input_df,
+            input_vector=input_vector,
+        )
+    else:
+        with col2:
             st.error("Please select at least 3 symptoms to make a prediction.")
-            st.session_state.shap_ready = False
+        st.session_state.shap_ready = False
+        
 
+if st.session_state.shap_ready:
+    st.markdown("##### Most Likely Diseases")
 
-    # Display results only if prediction is ready
-    if st.session_state.get("shap_ready", False):
-        st.markdown("##### Most Likely Diseases")
+    # Define a function to categorize certainty
+    def categorize_certainty(prob):
+        if prob >= 0.75:
+            return "High Certainty"
+        elif prob >= 0.45:
+            return "Medium Certainty"
+        else:
+            return "Low Certainty"
 
-        # Categorize certainty
-        def categorize_certainty(prob):
-            if prob >= 0.75:
-                return "High Certainty"
-            elif prob >= 0.45:
-                return "Medium Certainty"
-            else:
-                return "Low Certainty"
+    # Prepare DataFrame
+    disease_certainty_df = pd.DataFrame({
+        'Disease': st.session_state.top_5_diseases,
+        'Certainty': [categorize_certainty(p) for p in st.session_state.top_5_probs]
+    })
 
-        disease_certainty_df = pd.DataFrame({
-            'Disease': st.session_state.top_5_diseases,
-            'Certainty': [categorize_certainty(p) for p in st.session_state.top_5_probs]
-        })
+    # Generate short explanations for all 5 diseases
+if "disease_explanations" not in st.session_state:
+    try:
+        # Load API key from secrets
+        genai.configure(api_key=st.secrets["gemini_api_key"])
+        gemini_api = genai.GenerativeModel("gemini-2.5-flash")
 
-        # Display 5 cards
-        cols = st.columns(5)
-        for i, (disease, certainty) in enumerate(zip(disease_certainty_df['Disease'], disease_certainty_df['Certainty'])):
-            with cols[i]:
-                explanation = st.session_state.disease_explanations.get(
-                    disease, "Brief description unavailable."
-                )
-                st.markdown(
-                    f"""
-                    <div class="card" style="
-                        background: linear-gradient(to right, #1a1d23, #262730);
-                        padding: 20px;
-                        height: 240px;
-                        display: flex;
-                        flex-direction: column;
-                        justify-content: space-between;
-                        border-radius: 12px !important;
-                        box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-                        border: 2px solid #23252b;
-                        transition: all 0.3s ease;
-                        ">
-                        <div>
-                            <h3 style="
-                                text-align: center;
-                                font-size: 18px;
-                                font-weight: bold;
-                                color: #ffffff;
-                                margin: 0 0 12px 0;
-                                ">{disease}</h3>
-                            <p style="
-                                text-align: center;
-                                font-size: 14.5px;
-                                color: #b0bec5;
-                                line-height: 1.4;
-                                margin: 0 0 20px 0;
-                                ">{explanation}</p>
-                        </div>
+        diseases_list = "\n".join([f"- {d}" for d in st.session_state.top_5_diseases])
+
+        prompt = f"""
+            Give a very short (1 sentence, max 18 words) patient-friendly explanation for each condition below.
+            Format exactly: Disease Name: explanation text
+            No extra text, numbers, or quotes.
+
+            Conditions:
+            {diseases_list}
+            """
+
+        response = gemini_api.generate_content(prompt)
+        raw_text = response.text.strip()
+
+        explanations_dict = {}
+        for line in raw_text.split('\n'):
+            if ':' in line:
+                name_part, expl = line.split(':', 1)
+                disease_name = name_part.strip()
+                explanations_dict[disease_name] = expl.strip()
+
+        st.session_state.disease_explanations = explanations_dict
+    except Exception as e:
+        # Fallback if API fails
+        st.session_state.disease_explanations = {
+            d: "A medical condition that requires professional evaluation."
+            for d in st.session_state.top_5_diseases
+        }
+
+    # Create 5 columns for cards
+    cols = st.columns(5)
+
+    # Display each card with disease + short explanation + certainty
+    for i, (disease, certainty) in enumerate(zip(disease_certainty_df['Disease'], disease_certainty_df['Certainty'])):
+        with cols[i]:
+            # Get explanation (with fallback)
+            explanation = st.session_state.disease_explanations.get(
+                disease,
+                "Brief description unavailable."
+            )
+
+            st.markdown(
+                f"""
+                <div class="card" style="
+                    background: linear-gradient(to right, #1a1d23, #262730);
+                    padding: 20px;
+                    height: 240px;  <!-- Increased to fit explanation -->
+                    display: flex;
+                    flex-direction: column;
+                    justify-content: space-between;
+                    border-radius: 12px !important;
+                    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+                    border: 2px solid #23252b;
+                    transition: all 0.3s ease;
+                    ">
+                    <div>
+                        <h3 style="
+                            text-align: center;
+                            font-size: 18px;
+                            font-weight: bold;
+                            color: #ffffff;
+                            margin: 0 0 12px 0;
+                            ">{disease}</h3>
                         <p style="
                             text-align: center;
-                            font-size: 16px;
-                            color: #ffffff;
-                            font-weight: 600;
-                            margin: 0;
-                            ">{certainty}</p>
+                            font-size: 14.5px;
+                            color: #b0bec5;
+                            line-height: 1.4;
+                            margin: 0 0 20px 0;
+                            ">{explanation}</p>
                     </div>
-                    """,
-                    unsafe_allow_html=True
-                )
+                    <p style="
+                        text-align: center;
+                        font-size: 16px;
+                        color: #ffffff;
+                        font-weight: 600;
+                        margin: 0;
+                        ">{certainty}</p>
+                </div>
+                """,
+                unsafe_allow_html=True
+            )
 
-        st.markdown("---")
-
-        # Confidence Dashboard
-        top_prob = st.session_state.top_5_probs[0]
+    st.markdown("")
+    
+    # Confidence Dashboard
+    if st.session_state.shap_ready:
+        top_prob    = st.session_state.top_5_probs[0]
         top_disease = st.session_state.top_5_diseases[0]
-        second_prob = st.session_state.top_5_probs[1] if len(st.session_state.top_5_probs) > 1 else 0
-        gap_pts = (top_prob - second_prob) * 100
+        gap_pts     = (top_prob - st.session_state.top_5_probs[1]) * 100
 
-        # Risk level coloring
+        # Risk level 
         if top_prob > 0.75:
             certainty, badge_color = "High", "#f44e42"
         elif top_prob > 0.45:
@@ -339,79 +353,87 @@ with col_btn2:
         else:
             certainty, badge_color = "Low", "#4caf50"
 
-        col1, col2 = st.columns([2, 1], gap="medium")
-        with col1:
-            title_html = f"<b style='font-size:16px;'>{top_disease}</b>"
-            fig = go.Figure(go.Indicator(
-                mode="gauge+number+delta",
-                value=top_prob * 100,
-                domain={'x': [0, 1], 'y': [0, 1]},
-                title={'text': title_html, 'font': {'size': 16}},
-                delta={'reference': second_prob * 100,
-                    'position': "top",
-                    'increasing': {'color': "#4caf50"},
-                    'decreasing': {'color': "#f44e42"}},
-                gauge={
-                    'axis': {'range': [0, 100], 'tickwidth': 1, 'tickcolor': "white"},
-                    'bar': {'color': badge_color},
-                    'bgcolor': "#262730",
-                    'borderwidth': 2,
-                    'bordercolor': "#A8C8E0",
-                    'steps': [
-                        {'range': [0, 45], 'color': '#2e7d32'},
-                        {'range': [45, 75], 'color': '#fb8c00'},
-                        {'range': [75, 100], 'color': '#c62828'}
-                    ],
-                    'threshold': {
-                        'line': {'color': "white", 'width': 4},
-                        'thickness': 0.75,
-                        'value': top_prob * 100}
-                }))
+        with st.container():
+            st.markdown("<div class='conf-card'>", unsafe_allow_html=True)
 
-            fig.update_layout(
-                paper_bgcolor="#202229",
-                font={'color': "#d0d0d0"},
-                height=200,
-                margin=dict(l=10, r=10, t=52, b=8)
-            )
-            st.plotly_chart(fig, use_container_width=True, config={'displayModeBar': False})
+            col1, col2 = st.columns([2, 1], gap="medium")
 
-        with col2:
-            st.markdown(
-                f"""
-                <div style="
-                    background:#202229;
-                    padding:10px;
-                    border-radius:10px;
-                    text-align:center;
-                    border:2px solid {badge_color};
-                    ">
-                    <h4 style="margin:0; color:{badge_color};">{certainty} Certainty</h4>
-                    <p style="margin:4px 0 0; color:#d0d0d0; font-size:0.85rem;">
-                        +{gap_pts:.0f} pts vs #2
-                    </p>
-                </div>
-                """,
-                unsafe_allow_html=True,
-            )
+            with col1:
+                title_html = f"<b style='font-size:16px;'>{top_disease}</b>"
 
-            probs = [p * 100 for p in st.session_state.top_5_probs]
-            spark = go.Figure(go.Scatter(
-                y=probs,
-                mode='lines+markers',
-                line=dict(color='#4fc3f7', width=2),
-                marker=dict(size=5, color='#4fc3f7'),
-                hoverinfo='none'
-            ))
-            spark.update_layout(
-                paper_bgcolor="rgba(0,0,0,0)",
-                plot_bgcolor="rgba(0,0,0,0)",
-                xaxis=dict(visible=False),
-                yaxis=dict(visible=False, range=[0, 100]),
-                height=60,
-                margin=dict(l=0, r=0, t=0, b=0)
-            )
-            st.plotly_chart(spark, use_container_width=True, config={'staticPlot': True})
+                fig = go.Figure(go.Indicator(
+                    mode="gauge+number+delta",
+                    value=top_prob*100,
+                    domain={'x': [0, 1], 'y': [0, 1]},
+                    title={'text': title_html, 'font': {'size': 16}},
+                    delta={'reference': st.session_state.top_5_probs[1]*100,
+                        'position': "top",
+                        'increasing': {'color': "#4caf50"},
+                        'decreasing': {'color': "#f44e42"}},
+                    gauge={
+                        'axis': {'range': [0, 100], 'tickwidth': 1, 'tickcolor': "white"},
+                        'bar': {'color': badge_color},
+                        'bgcolor': "#262730",
+                        'borderwidth': 2,
+                        'bordercolor': "#A8C8E0",
+                        'steps': [
+                            {'range': [0, 45], 'color': '#2e7d32'},
+                            {'range': [45, 75], 'color': '#fb8c00'},
+                            {'range': [75, 100], 'color': '#c62828'}
+                        ],
+                        'threshold': {
+                            'line': {'color': "white", 'width': 4},
+                            'thickness': 0.75,
+                            'value': top_prob*100}
+                    }))
+
+                fig.update_layout(
+                    paper_bgcolor="#202229",
+                    font={'color': "#d0d0d0"},
+                    height=200,                     
+                    margin=dict(l=10, r=10, t=52, b=8)   
+                )
+                st.plotly_chart(fig, use_container_width=True,
+                                config={'displayModeBar': False})
+
+            with col2:
+                # Badge
+                st.markdown(
+                    f"""
+                    <div style="
+                        background:#202229;
+                        padding:10px;
+                        border-radius:10px;
+                        text-align:center;
+                        border:2px solid {badge_color};
+                        ">
+                        <h4 style="margin:0; color:{badge_color};">{certainty} Certainty</h4>
+                        <p style="margin:4px 0 0; color:#d0d0d0; font-size:0.85rem;">
+                            +{gap_pts:.0f} pts vs #2
+                        </p>
+                    </div>
+                    """,
+                    unsafe_allow_html=True,
+                )
+
+                probs = [p*100 for p in st.session_state.top_5_probs]
+                spark = go.Figure(go.Scatter(
+                    y=probs,
+                    mode='lines+markers',
+                    line=dict(color='#4fc3f7', width=2),
+                    marker=dict(size=5, color='#4fc3f7'),
+                    hoverinfo='none'
+                ))
+                spark.update_layout(
+                    paper_bgcolor="rgba(0,0,0,0)",
+                    plot_bgcolor="rgba(0,0,0,0)",
+                    xaxis=dict(visible=False),
+                    yaxis=dict(visible=False, range=[0, 100]),
+                    height=60,
+                    margin=dict(l=0, r=0, t=0, b=0)
+                )
+                st.plotly_chart(spark, use_container_width=True,
+                                config={'staticPlot': True})
 
             st.markdown("</div>", unsafe_allow_html=True)   
     
