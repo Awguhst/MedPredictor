@@ -4,7 +4,7 @@ This is a Streamlit-based machine learning application that offers multiple func
 
 ## Symptom-Based Disease Prediction
 
-This page allows users to select various symptoms from a multi-select dropdown, after which the app predicts potential diseases based on the selected symptoms. Additionally, users can explore the SHAP (SHapley Additive exPlanations) values, which help to understand how each symptom contributes to the model's prediction.
+This page enables users to select multiple symptoms from a dropdown menu. The application then predicts potential diseases based on the chosen symptoms. For enhanced interpretability, users can view SHAP (SHapley Additive exPlanations) values to understand the contribution of each symptom to the prediction. Additionally, the app leverages the Gemini API to generate detailed, easy-to-understand explanations for each predicted disease.
 
 ## Cardiovascular Disease Prediction
 
