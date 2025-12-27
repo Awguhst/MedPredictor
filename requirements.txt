@@ -11,6 +11,8 @@ plotly>=5.15.0
 grad-cam
 opencv-python-headless
 ttach
+google-generativeai
+
 
 
 
