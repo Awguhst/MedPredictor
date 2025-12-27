@@ -248,16 +248,15 @@ if st.session_state.shap_ready:
     })
 
     # Generate short explanations for all 5 diseases
-    if "disease_explanations" not in st.session_state:
-        try:
-            # Load API key from secrets
-            genai.configure(api_key=st.secrets["gemini_api_key"])
+if "disease_explanations" not in st.session_state:
+    try:
+        # Load API key from secrets
+        genai.configure(api_key=st.secrets["gemini_api_key"])
+        gemini_api = genai.GenerativeModel("gemini-2.5-flash")
 
-            gemini_api = genai.GenerativeModel("gemini-2.5-flash")  
+        diseases_list = "\n".join([f"- {d}" for d in st.session_state.top_5_diseases])
 
-            diseases_list = "\n".join([f"- {d}" for d in st.session_state.top_5_diseases])
-
-            prompt = f"""
+        prompt = f"""
             Give a very short (1 sentence, max 18 words) patient-friendly explanation for each condition below.
             Format exactly: Disease Name: explanation text
             No extra text, numbers, or quotes.
@@ -266,23 +265,23 @@ if st.session_state.shap_ready:
             {diseases_list}
             """
 
-            response = gemini_api.generate_content(prompt)
-            raw_text = response.text.strip()
+        response = gemini_api.generate_content(prompt)
+        raw_text = response.text.strip()
 
-            explanations_dict = {}
-            for line in raw_text.split('\n'):
-                if ':' in line:
-                    name_part, expl = line.split(':', 1)
-                    disease_name = name_part.strip()
-                    explanations_dict[disease_name] = expl.strip()
+        explanations_dict = {}
+        for line in raw_text.split('\n'):
+            if ':' in line:
+                name_part, expl = line.split(':', 1)
+                disease_name = name_part.strip()
+                explanations_dict[disease_name] = expl.strip()
 
-            st.session_state.disease_explanations = explanations_dict
-        except Exception as e:
-            # Fallback if API fails 
-            st.session_state.disease_explanations = {
-                d: "A medical condition that requires professional evaluation."
-                for d in st.session_state.top_5_diseases
-            }
+        st.session_state.disease_explanations = explanations_dict
+    except Exception as e:
+        # Fallback if API fails
+        st.session_state.disease_explanations = {
+            d: "A medical condition that requires professional evaluation."
+            for d in st.session_state.top_5_diseases
+        }
 
     # Create 5 columns for cards
     cols = st.columns(5)
